@@ -51,6 +51,7 @@
       </div>
       <div class="filter-item">
         <button onclick="reCalc()">재생성</button>
+        <button onclick="downloadAll()">일괄 다운로드</button>
       </div>
     </div>
 
@@ -117,6 +118,7 @@
 
           const btn = document.createElement('button');
           btn.type = 'button';
+          btn.className = 'download-btn';
           btn.innerText = '다운로드';
           btn.onclick = () => downloadImage(newFile.file);
           previewItem.appendChild(btn);
@@ -150,6 +152,12 @@
         document.getElementById('cropDiv').classList.remove("hide");
       } else {
         document.getElementById('cropDiv').classList.add("hide");
+      }
+    }
+    function downloadAll() {
+      const buttons = document.getElementById('preview').querySelectorAll('.download-btn');
+      for (const btn of buttons) {
+        btn.click();
       }
     }
 
