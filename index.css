@@ -1,0 +1,548 @@
+/* ========================================
+   1. Global
+======================================== */
+:root {
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-text: #1e293b;
+  --color-subtext: #64748b;
+  --color-border: #e2e8f0;
+  --color-bg: #f5f7fb;
+  --color-surface: #ffffff;
+  --color-success: #059669;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --shadow-card: 0 4px 20px rgba(15, 23, 42, 0.05);
+  --shadow-hover: 0 12px 30px rgba(15, 23, 42, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--color-bg);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  color: var(--color-text);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.07), transparent 32%),
+    var(--color-bg);
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button,
+input[type='checkbox'] {
+  cursor: pointer;
+}
+
+/* ========================================
+   2. Main Container
+======================================== */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 24px;
+
+  width: min(1200px, calc(100% - 48px));
+  min-height: 100vh;
+  height: auto;
+  margin: 0 auto;
+  padding: 40px 0 60px;
+}
+
+/* 상단 설정 패널 */
+.filter-container {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+
+  width: 100%;
+  padding: 28px;
+
+  background: var(--color-surface);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+/* 개별 설정 */
+.filter-container .filter-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  min-width: 0;
+  min-height: 54px;
+  padding: 12px 14px;
+
+  background: #f8fafc;
+  border: 1px solid #edf0f5;
+  border-radius: var(--radius-md);
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.filter-container .filter-item button {
+  width: 100%;
+  max-width: 560px;
+  min-height: 38px;
+  margin-top: auto;
+  padding: 9px 12px;
+  color: #fff;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 700;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.filter-container .filter-item:focus-within {
+  background: #fff;
+  border-color: rgba(99, 102, 241, 0.6);
+}
+
+.filter-container .filter-item h5 {
+  flex: 0 0 120px;
+  min-width: 0;
+  margin: 0;
+
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.filter-container .filter-item .row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.filter-container .filter-item .row h5 {
+  flex: 0 0 40px;
+}
+
+/* 크롭 체크박스 */
+.filter-container .filter-item label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-container .filter-item input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--color-primary);
+}
+
+/* 텍스트 입력 */
+.filter-container .filter-item input[type='text'] {
+  width: 100px;
+  min-width: 0;
+  height: 36px;
+  padding: 0 10px;
+
+  color: var(--color-text);
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.filter-container .filter-item input[type='text']:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+/* 크롭 비율 입력 */
+.filter-container .filter-item input[id^='cropRatio'] {
+  width: 58px;
+  flex: 0 1 58px;
+}
+
+.filter-container .filter-item span {
+  width: auto;
+  color: #94a3b8;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* ========================================
+   3. File Upload
+   HTML 클래스명 file-updload 유지
+======================================== */
+.file-updload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  padding: 26px;
+
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px dashed #c7d2fe;
+  border-radius: var(--radius-lg);
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.file-updload:hover {
+  background: #eef2ff;
+  border-color: var(--color-primary);
+}
+
+.file-updload input[type='file'] {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+
+  color: var(--color-subtext);
+  font-size: 13px;
+}
+
+.file-updload input[type='file']::file-selector-button {
+  margin-right: 14px;
+  padding: 11px 18px;
+
+  color: #fff;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 9px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.file-updload input[type='file']::file-selector-button:hover {
+  background: var(--color-primary-hover);
+}
+
+/* ========================================
+   4. Preview Section
+======================================== */
+.preview-files {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 18px;
+
+  width: 100%;
+}
+
+/* 이미지 카드 */
+.preview-files .preview-file-item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 14px;
+
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+
+  overflow: hidden;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.preview-files .preview-file-item:hover {
+  transform: translateY(-3px);
+  border-color: #c7d2fe;
+  box-shadow: var(--shadow-hover);
+}
+
+/* 이미지 표시 영역 */
+.preview-files .preview-file-item img {
+  display: block;
+
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+
+  background-color: #f1f5f9;
+  border-radius: 10px;
+}
+
+/* 이미지 정보 */
+.preview-files .preview-file-item .preview-file-desc {
+  padding: 4px 2px;
+
+  color: var(--color-subtext);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.9;
+
+  overflow-wrap: anywhere;
+}
+
+/* 다운로드 버튼 */
+.preview-files .preview-file-item button {
+  width: 100%;
+  min-height: 38px;
+  margin-top: auto;
+  padding: 9px 12px;
+
+  color: #fff;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 9px;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.preview-files .preview-file-item button:hover {
+  background: var(--color-primary-hover);
+}
+
+.preview-files .preview-file-item button:active {
+  transform: scale(0.98);
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.35);
+  outline-offset: 2px;
+}
+
+/* ========================================
+   5. Loader Overlay
+======================================== */
+.loader-wrapper {
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.loader-wrapper.show {
+  display: flex;
+}
+
+.loader-wrapper .loader {
+  display: inline-grid;
+
+  width: 80px;
+  aspect-ratio: 2;
+
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 5px #574951;
+}
+
+.loader-wrapper .loader:before {
+  content: '';
+
+  margin: 0 25%;
+  background: #a5b4fc;
+
+  clip-path: polygon(
+    97.55% 65.45%,
+    50% 100%,
+    2.45% 65.45%,
+    20.61% 9.55%,
+    79.39% 9.55%
+  );
+
+  transform-origin: bottom;
+
+  animation:
+    l7-0 0.5s linear infinite,
+    l7-1 3s steps(6) infinite;
+}
+
+@keyframes l7-0 {
+  0% {
+    rotate: -36deg;
+  }
+
+  to {
+    rotate: 36deg;
+  }
+}
+
+@keyframes l7-1 {
+  0% {
+    translate: -174% 0;
+  }
+
+  to {
+    translate: 174% 0;
+  }
+}
+
+/* ========================================
+   6. Responsive
+======================================== */
+
+/* 태블릿 */
+@media (max-width: 900px) {
+  .container {
+    width: calc(100% - 32px);
+    padding-top: 24px;
+  }
+
+  .filter-container {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .preview-files {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .preview-files .preview-file-item img {
+    height: 160px;
+  }
+}
+
+/* 모바일 */
+@media (max-width: 600px) {
+  .container {
+    width: calc(100% - 24px);
+    gap: 16px;
+    padding-top: 16px;
+    padding-bottom: 32px;
+  }
+
+  .filter-container {
+    gap: 10px;
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .filter-container .filter-item {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .filter-container .filter-item h5 {
+    flex-basis: 104px;
+    font-size: 12px;
+  }
+
+  .filter-container .filter-item input[type='text'] {
+    width: 80px;
+    height: 34px;
+    padding: 0 6px;
+    font-size: 12px;
+  }
+
+  .filter-container .filter-item input[id^='cropRatio'] {
+    width: 48px;
+    flex-basis: 48px;
+  }
+
+  .file-updload {
+    padding: 18px 12px;
+    border-radius: 14px;
+  }
+
+  .file-updload input[type='file'] {
+    font-size: 11px;
+  }
+
+  .file-updload input[type='file']::file-selector-button {
+    margin-right: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .preview-files {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .preview-files .preview-file-item {
+    gap: 10px;
+    padding: 8px;
+    border-radius: 12px;
+  }
+
+  .preview-files .preview-file-item img {
+    height: 130px;
+    border-radius: 8px;
+  }
+
+  .preview-files .preview-file-item .preview-file-desc {
+    font-size: 11px;
+    line-height: 1.8;
+  }
+
+  .preview-files .preview-file-item button {
+    min-height: 36px;
+    font-size: 11px;
+  }
+}
+
+/* 모션 최소화 설정 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.hide {
+  display: none !important;
+}

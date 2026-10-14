@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이미지 리사이징</title>
+
+  <link href="./assets/css/cropper.min.css" rel="stylesheet" />
+  <link href="./assets/css/cropper.css" rel="stylesheet" />
+  <link href="./index.css" rel="stylesheet" />
+  <script src="./assets/js/cropper.min.js"></script>
+  <script src="./assets/js/libgif.js"></script>
+  <script src="./assets/js/gif.js"></script>
+  <script src="./js/images.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="filter-container">
+      <div class="filter-item">
+        <div>
+          <label>
+            <input type="checkbox" id="crop" onchange="toggleCrop()" />
+            <h5>크롭하기</h5>
+          </label>
+        </div>
+        <div class="row hide" id="cropDiv">
+          <h5>비율</h5>
+          <input type="text" id="cropRatio1" onchange="numberFormat(event)" />
+          <span>/</span>
+          <input type="text" id="cropRatio2" onchange="numberFormat(event)" />
+        </div>
+      </div>
+      <div class="filter-item">
+        <h5>리사이징 너비</h5>
+        <input type="text" id="maxWidth" onchange="numberFormat(event)" />
+      </div>
+      <div class="filter-item">
+        <h5>업로드 최대 사이즈</h5>
+        <input type="text" id="limitWidth" onchange="numberFormat(event)" placeholder="width" /> * <input type="text"
+          id="limitHeight" onchange="numberFormat(event)" placeholder="height" />
+      </div>
+      <div class="filter-item">
+        <h5>제한 수량</h5>
+        <input type="text" id="maxLength" onchange="numberFormat(event)" />
+      </div>
+      <div class="filter-item">
+        <h5>퀄리티 (0~100)</h5>
+        <input type="text" id="quality" onchange="qualityFormat(event)" value="80" />
+      </div>
+      <div class="filter-item">
+        <button onclick="reCalc()">재생성</button>
+      </div>
+    </div>
+
+    <div class="file-updload">
+      <input type="file" accept="image/*" onchange="uploadImage(event)" multiple />
+    </div>
+
+    <div class="preview-files" id="preview"></div>
+  </div>
+
+  <div class="loader-wrapper">
+    <div class="loader"></div>
+  </div>
+
+  <script>
+    let prevFiles = [];
+
+    async function uploadImage(event) {
+      try {
+        const preview = document.getElementById('preview');
+        preview.replaceChildren();
+
+        const imgList = await ImageUtil.imageToFileList({
+          event,
+          prevFiles,
+          maxFileSizeMB: 10,
+          maxWidth: document.getElementById('maxWidth').value,
+          limitWidth: document.getElementById('limitWidth').value,
+          limitHeight: document.getElementById('limitHeight').value,
+          maxLength: document.getElementById('maxLength').value,
+          isCrop: document.getElementById('crop').checked,
+          cropRatio: document.getElementById('cropRatio1').value / document.getElementById('cropRatio2').value,
+          quality: Number(document.getElementById('quality').value) / 100,
+        });
+        if (!imgList) {
+          return;
+        }
+
+        for (const { newFile, originFile } of imgList) {
+          const previewItem = document.createElement('div');
+          previewItem.className = 'preview-file-item';
+
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(newFile.file);
+          previewItem.appendChild(img);
+
+          const text = document.createElement('div');
+          text.className = 'preview-file-desc';
+          text.innerHTML = `
+            원본 용량 : ${(originFile.file.size / 1024).toFixed(2)}KB
+            <br/>
+            리사이즈 용량 : ${(newFile.file.size / 1024).toFixed(2)}KB
+            <br/>
+            축소비율 : ${100 - ((newFile.file.size / originFile.file.size) * 100).toFixed(2)}%
+            <br/>
+            <br/>
+            원본 사이즈 : ${newFile.size.width} * ${newFile.size.height}
+            <br/>
+            리사이즈 사이즈 : ${originFile.size.width} * ${originFile.size.height}
+            <br/>
+            축소비율 : ${100 - ((newFile.size.width / originFile.size.width) * 100).toFixed(2)}%
+          `;
+          previewItem.appendChild(text);
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.innerText = '다운로드';
+          btn.onclick = () => downloadImage(newFile.file);
+          previewItem.appendChild(btn);
+
+          preview.appendChild(previewItem);
+        }
+        prevFiles = imgList.map(item => item.originFile.file);
+      } catch (error) {
+        console.error('uploadImage error', error);
+      }
+    }
+
+    function reCalc() {
+      uploadImage(null, prevFiles);
+    }
+
+    function downloadImage(file) {
+      const url = URL.createObjectURL(file);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = file.name || 'resized-image.png';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function toggleCrop() {
+      const isCrop = document.getElementById('crop').checked;
+      if (isCrop) {
+        document.getElementById('cropDiv').classList.remove("hide");
+      } else {
+        document.getElementById('cropDiv').classList.add("hide");
+      }
+    }
+
+
+    function numberFormat(event) {
+      const value = (event.target.value || '').replace(/[^0-9]/g, '');
+      event.target.value = value;
+    }
+    function qualityFormat(event) {
+      const value = (event.target.value || '').replace(/[^0-9]/g, '');
+      const numValue = Number(value);
+      if (isNaN(numValue)) {
+        event.target.value = 80;
+      } else if (numValue < 0) {
+        event.target.value = 0;
+      } else if (numValue > 100) {
+        event.target.value = 100;
+      } else {
+        event.target.value = numValue;
+      }
+    }
+
+    function loading() {
+      const elements = document.getElementsByClassName('loader-wrapper');
+      elements[0].classList.add('show');
+    }
+    function loadingEnd() {
+      const elements = document.getElementsByClassName('loader-wrapper');
+      elements[0].classList.remove('show');
+    }
+  </script>
+</body>
+
+</html>
