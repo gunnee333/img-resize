@@ -154,10 +154,11 @@
         document.getElementById('cropDiv').classList.add("hide");
       }
     }
-    function downloadAll() {
+    async function downloadAll() {
       const buttons = document.getElementById('preview').querySelectorAll('.download-btn');
       for (const btn of buttons) {
         btn.click();
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
 
